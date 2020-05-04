@@ -1,0 +1,181 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+from sklearn import datasets 
+
+tsv_file='https://raw.githubusercontent.com/justmarkham/DAT8/master/data/chipotle.tsv'
+csv_table=pd.read_table(tsv_file,sep='\t')
+csv_table.to_csv('C:\\Users\\User\\Downloads\\B10\\Assignments\\python.csv',index=False)
+csv_table.info()
+df=pd.read_csv('C:\\Users\\User\\Downloads\\B10\\Assignments\\python.csv')
+df.head()
+df.shape
+len(df.columns)
+len(df)
+df.columns
+df.info()
+df['item_price_edited']=df['item_price'].str.split('$').str[1]
+df["item_price_edited"] = df.item_price_edited.astype(float)
+
+# =============================================================================
+# Q1) what was the most ordered and least ordered item and how many times those are ordered?
+# =============================================================================
+ordered=df.groupby(['item_name'])['quantity'].sum().sort_values(ascending=False)
+most=ordered[:1]
+print("most ordered item is:",most)
+
+#output:
+most ordered item is: item_name
+Chicken Bowl    761
+Name: quantity, dtype: int64
+
+least=ordered[-1:]
+print("least ordered item is:",least)
+
+#output:
+least ordered item is: item_name
+Carnitas Salad    1
+Name: quantity, dtype: int64
+
+# =============================================================================
+# Q2) How much income was generated using most ordered and least ordered item?
+# =============================================================================
+high=df[df.item_name=='Chicken Bowl']
+m=high['item_price_edited'].sum()
+print('income was generated using most ordered:',m)
+
+#output:
+income was generated using most ordered: 7342.7300000000005
+
+low=df[df.item_name=='Carnitas Salad']
+l=low['item_price_edited'].sum()
+print('income was generated using least ordered:',l)
+
+#output:
+income was generated using least ordered: 8.99
+
+# =============================================================================
+# Q3) How many unique items we have in 'item_name' column and how many times each item occured?
+# =============================================================================
+df['item_name'].value_counts()
+
+#output:
+Chicken Bowl                             726
+Chicken Burrito                          553
+Chips and Guacamole                      479
+Steak Burrito                            368
+Canned Soft Drink                        301
+Steak Bowl                               211
+Chips                                    211
+Bottled Water                            162
+Chicken Soft Tacos                       115
+Chicken Salad Bowl                       110
+Chips and Fresh Tomato Salsa             110
+Canned Soda                              104
+Side of Chips                            101
+Veggie Burrito                            95
+Barbacoa Burrito                          91
+Veggie Bowl                               85
+Carnitas Bowl                             68
+Barbacoa Bowl                             66
+Carnitas Burrito                          59
+Steak Soft Tacos                          55
+6 Pack Soft Drink                         54
+Chips and Tomatillo Red Chili Salsa       48
+Chicken Crispy Tacos                      47
+Chips and Tomatillo Green Chili Salsa     43
+Carnitas Soft Tacos                       40
+Steak Crispy Tacos                        35
+Chips and Tomatillo-Green Chili Salsa     31
+Steak Salad Bowl                          29
+Nantucket Nectar                          27
+Barbacoa Soft Tacos                       25
+Chips and Roasted Chili Corn Salsa        22
+Izze                                      20
+Chips and Tomatillo-Red Chili Salsa       20
+Chips and Roasted Chili-Corn Salsa        18
+Veggie Salad Bowl                         18
+Barbacoa Crispy Tacos                     11
+Barbacoa Salad Bowl                       10
+Chicken Salad                              9
+Carnitas Crispy Tacos                      7
+Veggie Soft Tacos                          7
+Burrito                                    6
+Veggie Salad                               6
+Carnitas Salad Bowl                        6
+Steak Salad                                4
+Salad                                      2
+Bowl                                       2
+Crispy Tacos                               2
+Veggie Crispy Tacos                        1
+Carnitas Salad                             1
+Chips and Mild Fresh Tomato Salsa          1
+Name: item_name, dtype: int64
+
+# =============================================================================
+# Q4) How much was the revenue for the period(first 100 orders) in the dataset?
+# =============================================================================
+period=df.iloc[:100]
+p=period.item_price_edited.sum()
+print("revenue for the period(first 100 orders) in the dataset:",p)
+
+#output:
+revenue for the period(first 100 orders) in the dataset: 715.94
+
+# =============================================================================
+#  Q5) What is the average income amount per order?
+# =============================================================================
+
+df.item_price_edited.mean()
+
+#output:7.464335785374397
+
+# =============================================================================
+# Q6) what was the last item ordered?
+# =============================================================================
+df.iloc[-1]
+
+#output:
+order_id                                                           1834
+quantity                                                              1
+item_name                                            Chicken Salad Bowl
+choice_description    [Fresh Tomato Salsa, [Fajita Vegetables, Pinto...
+item_price                                                       $8.75 
+item_price_edited                                                  8.75
+Name: 4621, dtype: object
+
+# =============================================================================
+# Q7) what are the order details in 1500 column?
+# =============================================================================
+
+df[df.order_id==1500]
+
+#output:
+      order_id  quantity  ... item_price item_price_edited
+3750      1500         1  ...     $8.99               8.99
+3751      1500         1  ...     $8.99               8.99
+
+[2 rows x 6 columns]
+
+# =============================================================================
+# Q8) how much quantity ordered for most expensive item?
+# =============================================================================
+df['item_price_edited'].max()
+df[df.item_price_edited==44.25]
+
+#output:
+      order_id  quantity  ... item_price item_price_edited
+3598      1443        15  ...    $44.25              44.25
+
+[1 rows x 6 columns]
+
+# =============================================================================
+# Q9) How many times were a Veggie Salad Bowl ordered and how much income generated?
+# =============================================================================
+veggie=df[df.item_name=='Veggie Salad Bowl']
+veggie['order_id'].count()
+#output:18
+veggie['item_price_edited'].sum()
+#output:182.5
